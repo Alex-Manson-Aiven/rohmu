@@ -4,6 +4,7 @@ name: Build rohmu
 permissions: read-all
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
