@@ -4,6 +4,7 @@ name: Build rohmu
 permissions: read-all
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -18,26 +19,42 @@ jobs:
     strategy:
       matrix:
         # only use one version for the lint step
-        python-version: ["3.11"]
+        python-version: ["3.12"]
+    container: fedora:39
 
     steps:
+
+      - id: where-am-i
+        run: |
+          ls -lah
+          pwd
+
+      - id: install-dependencies
+        run: |
+          sudo dnf install hatch snappy-devel curl git python3 python3-pip lsb_release gcc -y
 
       - id: checkout-code
         uses: actions/checkout@v3
         with:
           # Do not persist the token during execution of this job.
           persist-credentials: false
+          fetch-depth: 0
 
-      - id: prepare-python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
+      - id: where-am-i-2
+        run: |
+          ls -lah
+          pwd
 
       - id: dependencies
         run: |
-          sudo apt-get install -y libsnappy-dev
-          pip install ".[dev]"
+          python3 -m pip install ".[dev]"
+
+      # - id: prepare-python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: ${{ matrix.python-version }}
+      #     # cache: pip
+      #
 
       - id: lint
         run: make lint
