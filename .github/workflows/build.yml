@@ -20,6 +20,7 @@ jobs:
       matrix:
         # only use one version for the lint step
         python-version: ["3.11"]
+    container: fedora:39
 
     steps:
 
